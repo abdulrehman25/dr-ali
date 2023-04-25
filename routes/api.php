@@ -9,6 +9,7 @@ use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserFeedbackController;
+use App\Http\Controllers\UserReportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -43,6 +44,8 @@ Route::post('update/{id}', [UserController::class,'updateUserProfile']);
 #users feedback 
 Route::post('users_feeback', [UserFeedbackController::class, 'storeUserFeedback']);
 
+#user reports
+Route::post('user_reports', [UserReportController::class, 'storeUserReport']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);

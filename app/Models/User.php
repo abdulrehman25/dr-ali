@@ -61,6 +61,8 @@ class User extends Authenticatable
     }
 
     public function updateUserData($request){
+        $scanData =NULL;
+        $reportData =NULL;
        
         if ($scan = $request->file('scan')) {
             $destinationPath = 'scan/';
