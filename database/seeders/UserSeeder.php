@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin@123'),
             'first_name' => 'admin',
             'last_name' => 'radiology',
-            'is_admin' => '0'
+            'is_admin' => 'true'
         ]);
     }
 }
