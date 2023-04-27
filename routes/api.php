@@ -47,6 +47,11 @@ Route::post('users_feeback', [UserFeedbackController::class, 'storeUserFeedback'
 #user reports
 Route::post('user_reports', [UserReportController::class, 'storeUserReport']);
 
+#admin routes list
+Route::get('users_list', [UserController::class, 'getUsersList']);
+Route::delete('delete_user/{id}',[UserController::class, 'deleteUser']);
+
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('getusers',[AuthController::class,'getUser']);
