@@ -38,4 +38,8 @@ class UserController extends Controller
             }
         }
     }
+
+    public function getUsersList(User $user){
+        return response(['data'=>$user->getAllUser(),'status'=>200]);
+    }
 }

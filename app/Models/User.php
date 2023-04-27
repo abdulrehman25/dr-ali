@@ -91,7 +91,7 @@ class User extends Authenticatable
     }
 
     public function getAllUser(){
-        return User::all();
+        return User::where('is_admin','false')->get();
     }
 
 }
