@@ -42,4 +42,13 @@ class UserController extends Controller
     public function getUsersList(User $user){
         return response(['data'=>$user->getAllUser(),'status'=>200]);
     }
+
+    public function deleteUser(Request $request, $id) {
+        $user = User::find($id);
+        if(is_null($user)) {
+            return response()->json(['message' => 'User Not Found', 'status' => 404]);
+        }
+        $user->delete();
+        return response()->json(['message' => 'User deleted', 'status' => 200]);
+    }
 }
