@@ -38,4 +38,31 @@ class UserReport extends Model
 
         return response(["data" => $response,'status'=>'success']);
     }
+
+    public function getUserReport($user_id)
+    {
+        if($user_id > 0){
+            $userReport = UserReport::where('user_id',$user_id)->get();
+            if(count($userReport) == 0){
+                return response(['status'=>404,'data'=>'No Record Found.']);
+            }
+            $arr = [];
+        
+            foreach($userReport as $key=>$report){
+                if(in_array($report->title,$arr)){
+                    $newArr[$report->title][] = public_path().'/user_reports/'.$report->report;
+                }else{
+                    $arr[] = $report->title;
+                    $newArr[$report->title][] = public_path().'/user_reports/'.$report->report;
+
+                }
+            }
+            
+            return response(['status'=>200,'data'=>$newArr]);//[$newArr]
+        }else{
+            return response(['status'=>404,'data'=>'Please enter a valid user Id.']);
+        }
+        
+
+    }
 }

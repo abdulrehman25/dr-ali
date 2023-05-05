@@ -46,6 +46,7 @@ Route::post('users_feeback', [UserFeedbackController::class, 'storeUserFeedback'
 
 #user reports
 Route::post('user_reports', [UserReportController::class, 'storeUserReport']);
+Route::get('get_user_report/{id}', [UserReportController::class, 'getUserReport']);
 
 #admin routes list
 Route::get('users_list', [UserController::class, 'getUsersList']);
