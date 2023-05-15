@@ -11,5 +11,9 @@ class UserFeedbackController extends Controller
     public function storeUserFeedback(Request $request, UserFeedback $userfeedback){
         return $userfeedback->saveUserFeedBack($request);
     }
+
+    public function getUserFeedback(UserFeedback $userfeedback){
+        return $userfeedback->getUserFeedback();
+    }
       
 }

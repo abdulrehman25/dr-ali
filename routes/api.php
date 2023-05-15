@@ -43,6 +43,7 @@ Route::post('update/{id}', [UserController::class,'updateUserProfile']);
 
 #users feedback 
 Route::post('users_feeback', [UserFeedbackController::class, 'storeUserFeedback']);
+Route::get('get_users_feedback', [UserFeedbackController::class, 'getUserFeedback']);
 
 #user reports
 Route::post('user_reports', [UserReportController::class, 'storeUserReport']);
@@ -52,6 +53,7 @@ Route::get('get_user_report/{id}', [UserReportController::class, 'getUserReport'
 Route::get('users_list', [UserController::class, 'getUsersList']);
 Route::delete('delete_user/{id}',[UserController::class, 'deleteUser']);
 
+#
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);

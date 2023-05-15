@@ -48,5 +48,10 @@ class UserFeedback extends Model
         return response(["data" => $response,'status'=>'success']);
     }
 
+    public function getUserFeedback(){
+
+        return response(["data" => $this->all(),'status'=>'200']);
+
+    }
 
 }
