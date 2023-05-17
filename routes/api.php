@@ -55,6 +55,7 @@ Route::delete('delete_user/{id}',[UserController::class, 'deleteUser']);
 
 #Approve User feedback
 Route::post('approve_users_feeback', [UserFeedbackController::class, 'approveUserFeedback']);
+Route::post('dis_approve_users_feeback', [UserFeedbackController::class, 'disApproveUserFeedback']);
 
 Route::delete('delete_users_feedback/{id}',[UserFeedbackController::class, 'deleteUserFeedback']);
 
