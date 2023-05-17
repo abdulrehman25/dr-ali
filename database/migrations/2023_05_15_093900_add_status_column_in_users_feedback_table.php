@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users_feedback', function (Blueprint $table) {
-            $table->enum('status', ['1', '0'])->default('0')->comment('0:disapproved, 1:approved')->after('rating');
+            $table->enum('status', ['1', '0'])->nullable()->comment('0:disapproved, 1:approved')->after('rating');
         });
     }
 
