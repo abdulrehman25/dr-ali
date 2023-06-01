@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ContactUs;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\ContactUsMail;
+use Illuminate\Support\Facades\Mail;
 class ContactUsController extends Controller
 {
     public function createRequest(Request $request){
@@ -27,6 +29,9 @@ class ContactUsController extends Controller
         $newReq->message = $request->message;
         $newReq->save();
 
+        //$mail = 'info@radiologycheck.com';
+        $mail = 'praveshyadav@virtualemployee.com';
+        Mail::to($mail)->send(new ContactUsMail($newReq));
         return response(['message' =>'Request added successfully.', 'status' => 200]);
     }
 }
