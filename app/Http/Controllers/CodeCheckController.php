@@ -11,6 +11,7 @@ class CodeCheckController extends Controller
     public function __invoke(Request $request)
     {
 
+        
         $validator = Validator::make($request->all(),[
             'code' => 'required|string|exists:reset_code_passwords',
         ]);
