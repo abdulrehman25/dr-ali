@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/stripe1',[StripeController::class, 'pay']);
+Route::get('/emailer',[StripeController::class, 'emailer']);
+Route::post('/pay',[StripeController::class, 'makePayment']);
+
+Route::post('stripe',[StripeController::class,'stripePost'])->name('stripe.post');
+
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::get('/success', [StripeController::class, 'success'])->name('checkout.success');
+Route::get('/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
+Route::post('/webhook', [StripeController::class, 'webhook'])->name('checkout.webhook');

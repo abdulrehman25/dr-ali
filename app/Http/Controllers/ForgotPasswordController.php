@@ -13,7 +13,7 @@ class ForgotPasswordController extends Controller
 {
     public function testMail()
     {
-        $mail = 'info@radiologycheck.com';
+        $mail = 'praveshyadav@virtualemployee.com';
         Mail::to($mail)->send(new TestMail);
 
         dd('Mail Send Successfully !!');

@@ -70,3 +70,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 //Created for testing
 Route::get('test_mail','App\Http\Controllers\ForgotPasswordController@testMail');
+Route::post('make_payment','App\Http\Controllers\StripeController@stripePost')->name('stripe.post');
