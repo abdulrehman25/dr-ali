@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Package;
+
+class PackageController extends Controller
+{
+    public function getPackage($id){
+       
+        $package = Package::find($id);
+        if($package){
+            return response(['data' =>$package, 'status' => '200']);
+        }else{
+            return response(['data' =>NULL, 'status' => '404']);
+        }
+    }
+
+   
+}

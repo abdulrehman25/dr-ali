@@ -9,6 +9,7 @@ use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserFeedbackController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\{UserReportController,ContactUsController};
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,8 @@ Route::post('dis_approve_users_feeback', [UserFeedbackController::class, 'disApp
 Route::delete('delete_users_feedback/{id}',[UserFeedbackController::class, 'deleteUserFeedback']);
 
 Route::post('contact_us',[ContactUsController::class,'createRequest']);
+
+Route::get('get_package/{id}',[PackageController::class,'getPackage']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Package extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'name',
+        'price',
+        'appointment_reason',
+        'appointment_date',
+        'appointment_time',
+        'appointment_email',
+        'appointment_number',
+    ];
+    
+}

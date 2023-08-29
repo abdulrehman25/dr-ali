@@ -28,6 +28,6 @@ class RadiologyFinalReport extends Mailable
 		$packageLink = $site_url."/payment/".$this->user->selected_package;
 		
         return $this->markdown('emails.radiology-final-report-mail')
-                    ->with(['user' => $this->user, 'link' => $packageLink, 'package' => $package]);
+                    ->with(['user' => $this->user, 'link' => $packageLink]);
     }
 }

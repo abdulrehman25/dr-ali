@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use http\Env\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Models\Payment;
+
 class StripeController extends Controller
 {
     public function pay(){
@@ -40,14 +42,27 @@ class StripeController extends Controller
     {
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-
+			$customer_obj = json_decode($request->customer);
+			$product_obj = json_decode($request->product);
+		$customer = \Stripe\Customer::create([ 
+            'name' => $customer_obj->name,  
+            'email' => $customer_obj->email 
+        ]);  
+		
+		\Stripe\Customer::createSource(
+			$customer->id,
+			['source' => $request->stripeToken]
+		);
         $charge = \Stripe\Charge::create ([
                 "amount" => $request->amount * 100,
-                "currency" => "EUR",
-                "source" => $request->stripeToken,
-                "description" => "Thanks For Payment" 
+                "currency" => "CHF",
+				"customer" => $customer->id,
+                "description" => $product_obj->name,
+
         ]);
+
 		if($charge->status == 'succeeded'){
+			$payment_subscription = Payment::create(['amount' => $request->amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
 			  return response()->json([
 						'status' => true,
 						'massage' => 'payment successfully.',

@@ -61,6 +61,8 @@ Route::delete('delete_users_feedback/{id}',[UserFeedbackController::class, 'dele
 
 Route::post('contact_us',[ContactUsController::class,'createRequest']);
 
+Route::get('get_package/{id}',[PackageController::class,'getPackage']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('getusers',[AuthController::class,'getUser']);
@@ -70,4 +72,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 //Created for testing
 Route::get('test_mail','App\Http\Controllers\ForgotPasswordController@testMail');
-Route::post('make_payment','App\Http\Controllers\ForgotPasswordController@stripePost')->name('stripe.post');
+Route::post('make_payment','App\Http\Controllers\StripeController@stripePost')->name('stripe.post');
