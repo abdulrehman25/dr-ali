@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use http\Env\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Payment;
+use Stripe;
 
 class StripeController extends Controller
 {
     public function pay(){
         return view('stripe');
     }
+
 
 
   public function emailer(){
@@ -40,41 +42,67 @@ class StripeController extends Controller
 
     public function stripePost(Request $request)
     {
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        try{
+        //dd($request->stripeToken);
+        
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-			$customer_obj = json_decode($request->customer);
-			$product_obj = json_decode($request->product);
-		$customer = \Stripe\Customer::create([ 
-            'name' => $customer_obj->name,  
-            'email' => $customer_obj->email 
+        // $customerArr = array("name"=>'test', "email"=>'abc@yopmail.com', "id"=>"test123");
+;
+        
+        $amount=$request->amount;
+        
+		// $customer_obj = json_decode($request->customer);
+
+            //dd($customer_obj->id);
+			//$product_obj = json_decode($request->product)??'test';
+		$customer = Stripe\Customer::create([ 
+            'name' => $request->name,  
+            'email' => $request->email 
         ]);  
 		
-		\Stripe\Customer::createSource(
+		Stripe\Customer::createSource(
 			$customer->id,
 			['source' => $request->stripeToken]
 		);
-        $charge = \Stripe\Charge::create ([
-                "amount" => $request->amount * 100,
-                "currency" => "CHF",
+        $charge = Stripe\Charge::create ([
+                "amount" => $amount * 100,
+                "currency" => "CHF",                
 				"customer" => $customer->id,
-                "description" => $product_obj->name,
+                "description" => $request->package_name,
 
         ]);
 
 		if($charge->status == 'succeeded'){
-			$payment_subscription = Payment::create(['amount' => $request->amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
+			// $payment_subscription = Payment::create(['amount' => $amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
+                $customerArr=[
+                    'amount'=>$amount,
+                    'user_email'=>$request->email,
+                    'transaction_id'=>$request->email,
+                    'status'=>$request->email,
+                    'package_id'=>$request->package_id,
+                ];
+          
 			  return response()->json([
 						'status' => true,
 						'massage' => 'payment successfully.',
 						'data' => array('success' => true, 'resp' =>  $charge)
 					], 200);
 		 }else{
+            
 			 return response()->json([
 						'status' => false,
-						'massage' => 'payment successfully.',
-						'data' => array('success' => false, 'resp' =>  $charge)
+						'massage' => 'payment failed.'						
 					], 400);
 		 }
+        }catch(\Exception $e){
+            //echo $e->getMessage();;
+            return response()->json([
+                'status' => false,
+                'massage' => 'payment failed! '.$e->getMessage()
+            ], 400);
+            
+        }
     }
 
     public function checkout()

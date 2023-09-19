@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserFeedbackController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\{UserReportController,ContactUsController};
+use App\Http\Controllers\StripeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -73,4 +74,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 //Created for testing
 Route::get('test_mail','App\Http\Controllers\ForgotPasswordController@testMail');
-Route::post('make_payment','App\Http\Controllers\StripeController@stripePost')->name('stripe.post');
+//Route::post('make_payment','App\Http\Controllers\StripeController@stripePost')->name('stripe.post');
+
+Route::post('make_payment',[StripeController::class,'stripePost']);
