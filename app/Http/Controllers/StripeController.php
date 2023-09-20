@@ -6,25 +6,29 @@ use Illuminate\Http\Request;
 use http\Env\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Payment;
+use Stripe;
 
 class StripeController extends Controller
 {
-    public function pay(){
+    public function pay()
+    {
         return view('stripe');
     }
 
 
-  public function emailer(){
+
+    public function emailer()
+    {
         return view('emails/radiology-final-report-mail');
     }
 
     // public function makePayment(Request $request){
-       
+
     //     $customer = \Stripe\Customer::create([
     //         'email' => $_POST['stripeEmail'],
     //         'source' => $_POST['stripeToken'],
     //       ]);
-        
+
     //       \Stripe\Stripe::setApiKey('sk_test_51MneWGSDcpngmiAPOjUTxI43MHLb7OOjYVncVeRI9yKy8sDw7T898E7HlDjO6czP2k8F85DFY88RT35J3RYapHpf00SxePX90m');
 
     //       $charge = \Stripe\Charge::create([
@@ -36,50 +40,70 @@ class StripeController extends Controller
 
     //       dd($charge);
     // }
-    
+
 
     public function stripePost(Request $request)
     {
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        try {
+            //dd($request->stripeToken);
+            Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-			$customer_obj = json_decode($request->customer);
-			$product_obj = json_decode($request->product);
-		$customer = \Stripe\Customer::create([ 
-            'name' => $customer_obj->name,  
-            'email' => $customer_obj->email 
-        ]);  
-		
-		\Stripe\Customer::createSource(
-			$customer->id,
-			['source' => $request->stripeToken]
-		);
-        $charge = \Stripe\Charge::create ([
-                "amount" => $request->amount * 100,
+            $amount = $request->amount;
+
+            // $customer_obj = json_decode($request->customer);
+            
+            $customer = Stripe\Customer::create([
+                'name' => $request->name,
+                'email' => $request->email
+            ]);
+
+            Stripe\Customer::createSource(
+                $customer->id,
+                ['source' => $request->stripeToken]
+            );
+            $charge = Stripe\Charge::create([
+                "amount" => $amount * 100,
                 "currency" => "CHF",
-				"customer" => $customer->id,
-                "description" => $product_obj->name,
+                "customer" => $customer->id,
+                "description" => $request->package_name,
 
-        ]);
+            ]);
 
-		if($charge->status == 'succeeded'){
-			$payment_subscription = Payment::create(['amount' => $request->amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
-			  return response()->json([
-						'status' => true,
-						'massage' => 'payment successfully.',
-						'data' => array('success' => true, 'resp' =>  $charge)
-					], 200);
-		 }else{
-			 return response()->json([
-						'status' => false,
-						'massage' => 'payment successfully.',
-						'data' => array('success' => false, 'resp' =>  $charge)
-					], 400);
-		 }
+            if ($charge->status == 'succeeded') {
+                // $payment_subscription = Payment::create(['amount' => $amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
+                $customerArr = [
+                    'amount' => $amount,
+                    'user_email' => $request->email,
+                    'transaction_id' => $request->email,
+                    'status' => $request->email,
+                    'package_id' => $request->package_id,
+                ];
+
+                return response()->json([
+                    'status' => true,
+                    'massage' => 'payment successfully.',
+                    'data' => array('success' => true, 'resp' => $charge)
+                ], 200);
+            } else {
+
+                return response()->json([
+                    'status' => false,
+                    'massage' => 'payment failed.'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            //echo $e->getMessage();;
+            return response()->json([
+                'status' => false,
+                'massage' => 'payment failed! ' . $e->getMessage()
+            ], 400);
+
+        }
     }
 
     public function checkout()
     {
-       
+
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
         $lineItems[] = [
@@ -89,11 +113,11 @@ class StripeController extends Controller
                     'name' => "t-shirt",
                     // 'images' => [$product->image]
                 ],
-                'unit_amount' => 5* 100,
+                'unit_amount' => 5 * 100,
             ],
             'quantity' => 1,
         ];
-    
+
         $session = \Stripe\Checkout\Session::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -116,7 +140,7 @@ class StripeController extends Controller
         $sessionId = $request->get('session_id');
 
         try {
-            
+
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
             //dd($session->customer_details->name);
             if (!$session) {
@@ -157,7 +181,9 @@ class StripeController extends Controller
 
         try {
             $event = \Stripe\Webhook::constructEvent(
-                $payload, $sig_header, $endpoint_secret
+                $payload,
+                $sig_header,
+                $endpoint_secret
             );
         } catch (\UnexpectedValueException $e) {
             // Invalid payload
@@ -167,7 +193,7 @@ class StripeController extends Controller
             return response('', 400);
         }
 
-// Handle the event
+        // Handle the event
         switch ($event->type) {
             case 'checkout.session.completed':
                 $session = $event->data->object;
