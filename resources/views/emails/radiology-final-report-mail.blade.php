@@ -4,14 +4,14 @@
     </tr>
     <tr>
         <td> 
-		<img src="{{ asset('image/pdf-icon.png') }}" width="70px" />
+		<img src="{{ asset('../../../public/image/pdf-icon.png') }}" width="70px" />
 		</td>
     </tr>
     <tr>
         <td>Dr. med. Ali Rahman</td>
     </tr>
     <tr>
-        <td><img src="{{ asset('image/signature-img.png') }}" alt="" /></td>
+        <td><img src="{{ asset('../../../public/signature-img.png') }}" alt="" /></td>
     </tr>
     <tr>
         <td>payment information</td>

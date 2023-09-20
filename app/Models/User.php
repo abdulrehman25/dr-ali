@@ -77,7 +77,7 @@ class User extends Authenticatable
 
         $user = User::find($request->id);
         $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
+        // $user->last_name = $request->last_name;
         $user->type_of_scan = json_encode($request->type_of_scan);
         $user->what_part_of_body = json_encode($request->what_part_of_body);
         $user->scan = $scanData;
@@ -86,7 +86,8 @@ class User extends Authenticatable
         $user->selected_package = $request->selected_package;
         $user->phone = $request->phone;
         $user->save();
-        
+                // dd($request->all());
+
         return $user;
     }
 
