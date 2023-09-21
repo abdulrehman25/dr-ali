@@ -10,6 +10,11 @@ use Stripe;
 
 class StripeController extends Controller
 {
+    public function __construct()
+    {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+    }
+
     public function pay()
     {
         return view('stripe');
@@ -46,12 +51,12 @@ class StripeController extends Controller
     {
         try {
             //dd($request->stripeToken);
-            Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
 
             $amount = $request->amount;
 
             // $customer_obj = json_decode($request->customer);
-            
+
             $customer = Stripe\Customer::create([
                 'name' => $request->name,
                 'email' => $request->email
@@ -104,7 +109,6 @@ class StripeController extends Controller
     public function checkout()
     {
 
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
         $lineItems[] = [
             'price_data' => [
@@ -136,7 +140,6 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
         $sessionId = $request->get('session_id');
 
         try {
