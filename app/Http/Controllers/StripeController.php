@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use http\Env\Response;
+use Stripe\Checkout\Session;
+use Stripe\Exception\SignatureVerificationException;
+use Stripe\Webhook;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\Payment;
 use Stripe;
+use UnexpectedValueException;
 
 class StripeController extends Controller
 {
@@ -19,7 +24,6 @@ class StripeController extends Controller
     {
         return view('stripe');
     }
-
 
 
     public function emailer()
@@ -57,51 +61,25 @@ class StripeController extends Controller
 
             // $customer_obj = json_decode($request->customer);
 
-            $customer = Stripe\Customer::create([
-                'name' => $request->name,
-                'email' => $request->email
-            ]);
+            $customer = Stripe\Customer::create(['name' => $request->name, 'email' => $request->email]);
 
-            Stripe\Customer::createSource(
-                $customer->id,
-                ['source' => $request->stripeToken]
-            );
-            $charge = Stripe\Charge::create([
-                "amount" => $amount * 100,
-                "currency" => "CHF",
-                "customer" => $customer->id,
-                "description" => $request->package_name,
+            Stripe\Customer::createSource($customer->id, ['source' => $request->stripeToken]);
+            $charge = Stripe\Charge::create(["amount" => $amount * 100, "currency" => "CHF", "customer" => $customer->id, "description" => $request->package_name,
 
             ]);
 
             if ($charge->status == 'succeeded') {
                 // $payment_subscription = Payment::create(['amount' => $amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
-                $customerArr = [
-                    'amount' => $amount,
-                    'user_email' => $request->email,
-                    'transaction_id' => $request->email,
-                    'status' => $request->email,
-                    'package_id' => $request->package_id,
-                ];
+                $customerArr = ['amount' => $amount, 'user_email' => $request->email, 'transaction_id' => $request->email, 'status' => $request->email, 'package_id' => $request->package_id,];
 
-                return response()->json([
-                    'status' => true,
-                    'massage' => 'payment successfully.',
-                    'data' => array('success' => true, 'resp' => $charge)
-                ], 200);
+                return response()->json(['status' => true, 'massage' => 'payment successfully.', 'data' => array('success' => true, 'resp' => $charge)], 200);
             } else {
 
-                return response()->json([
-                    'status' => false,
-                    'massage' => 'payment failed.'
-                ], 400);
+                return response()->json(['status' => false, 'massage' => 'payment failed.'], 400);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //echo $e->getMessage();;
-            return response()->json([
-                'status' => false,
-                'massage' => 'payment failed! ' . $e->getMessage()
-            ], 400);
+            return response()->json(['status' => false, 'massage' => 'payment failed! ' . $e->getMessage()], 400);
 
         }
     }
@@ -110,24 +88,10 @@ class StripeController extends Controller
     {
 
 
-        $lineItems[] = [
-            'price_data' => [
-                'currency' => 'usd',
-                'product_data' => [
-                    'name' => "t-shirt",
-                    // 'images' => [$product->image]
-                ],
-                'unit_amount' => 5 * 100,
-            ],
-            'quantity' => 1,
-        ];
+        $lineItems[] = ['price_data' => ['currency' => 'usd', 'product_data' => ['name' => "t-shirt",// 'images' => [$product->image]
+        ], 'unit_amount' => 5 * 100,], 'quantity' => 1,];
 
-        $session = \Stripe\Checkout\Session::create([
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => route('checkout.cancel', [], true),
-        ]);
+        $session = Session::create(['line_items' => $lineItems, 'mode' => 'payment', 'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}", 'cancel_url' => route('checkout.cancel', [], true),]);
 
         // $order = new Order();
         // $order->status = 'unpaid';
@@ -144,7 +108,7 @@ class StripeController extends Controller
 
         try {
 
-            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $session = Session::retrieve($sessionId);
             //dd($session->customer_details->name);
             if (!$session) {
                 throw new NotFoundHttpException;
@@ -162,7 +126,7 @@ class StripeController extends Controller
             // }
 
             return view('product.checkout-success', compact('customer'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new NotFoundHttpException();
         }
 
@@ -183,15 +147,11 @@ class StripeController extends Controller
         $event = null;
 
         try {
-            $event = \Stripe\Webhook::constructEvent(
-                $payload,
-                $sig_header,
-                $endpoint_secret
-            );
-        } catch (\UnexpectedValueException $e) {
+            $event = Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+        } catch (UnexpectedValueException $e) {
             // Invalid payload
             return response('', 400);
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+        } catch (SignatureVerificationException $e) {
             // Invalid signature
             return response('', 400);
         }
