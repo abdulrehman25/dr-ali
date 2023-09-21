@@ -18,7 +18,7 @@ return new class extends Migration
 			$table->integer('amount')->nullable();
 			$table->string('user_email')->nullable();
 			$table->string('transaction_id')->nullable();
-			$table->enum('status',['pending', 'succeeded', 'failed'])->nullable();
+			$table->string('status')->nullable();
             $table->integer('package_id')->nullable();
             $table->timestamps();
         });

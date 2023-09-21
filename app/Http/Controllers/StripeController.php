@@ -41,13 +41,53 @@ class StripeController extends Controller
     //       dd($charge);
     // }
 
+    public function saveStripeOrder(Request $request)
+    {
+        try{
+            $newReq = new Payment;
+            $newReq->amount = $request->amount;
+            $newReq->user_email = $request->user_email;
+            $newReq->transaction_id = $request->transaction_id;
+            $newReq->status = $request->status;
+            $newReq->package_id = $request->package_id;
+            $newReq->save();
+            
+        
+            return response()->json([
+                'status' => true,
+                'massage' => 'Order saved successfully.'
+                
+            ], 200);
+        } catch (\Exception $e) {
+            
+            return response()->json([
+                'status' => false,
+                'massage' => 'Error! ' . $e->getMessage()
+            ], 400);
 
+        }
+    }
     public function stripePost(Request $request)
     {
         try {
             //dd($request->stripeToken);
             Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
+            $name='test';
+            $number='4242424242424242';
+            $exp_month='12';
+            $exp_year='2025';
+            $cvc='123';
+            $response = \Stripe\Token::create(array(
+                "card" => array(
+                    "name" => $name,
+                    "number" => $number,
+                    "exp_month" => $exp_month,
+                    "exp_year" => $exp_year,
+                    "cvc" => $cvc
+              )));
+
+            
             $amount = $request->amount;
 
             // $customer_obj = json_decode($request->customer);
@@ -74,8 +114,8 @@ class StripeController extends Controller
                 $customerArr = [
                     'amount' => $amount,
                     'user_email' => $request->email,
-                    'transaction_id' => $request->email,
-                    'status' => $request->email,
+                    'transaction_id' => $charge->id,
+                    'status' => $charge->status,
                     'package_id' => $request->package_id,
                 ];
 
@@ -95,7 +135,7 @@ class StripeController extends Controller
             //echo $e->getMessage();;
             return response()->json([
                 'status' => false,
-                'massage' => 'payment failed! ' . $e->getMessage()
+                'massage' => 'Error! ' . $e->getMessage()
             ], 400);
 
         }
