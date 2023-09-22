@@ -83,6 +83,32 @@ class StripeController extends Controller
 
         }
     }
+    public function saveStripeOrder(Request $request)
+    {
+        try{
+            $newReq = new Payment;
+            $newReq->amount = $request->amount;
+            $newReq->user_email = $request->user_email;
+            $newReq->transaction_id = $request->transaction_id;
+            $newReq->status = $request->status;
+            $newReq->package_id = $request->package_id;
+            $newReq->save();
+            
+        
+            return response()->json([
+                'status' => true,
+                'massage' => 'Order saved successfully.'
+                
+            ], 200);
+        } catch (Exception $e) {
+            
+            return response()->json([
+                'status' => false,
+                'massage' => 'Error! ' . $e->getMessage()
+            ], 400);
+
+        }
+    }
 
     public function checkout()
     {
