@@ -76,4 +76,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::get('test_mail','App\Http\Controllers\ForgotPasswordController@testMail');
 //Route::post('make_payment','App\Http\Controllers\StripeController@stripePost')->name('stripe.post');
 
-Route::post('make_payment',[StripeController::class,'saveStripeOrder']);
+Route::post('make_payment',[StripeController::class,'stripePost']);

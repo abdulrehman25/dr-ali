@@ -17,7 +17,7 @@ class StripeController extends Controller
 {
     public function __construct()
     {
-        Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
     }
 
     public function pay()
@@ -57,9 +57,7 @@ class StripeController extends Controller
             //dd($request->stripeToken);
 
 
-            $amount = $request->amount;
-
-            // $customer_obj = json_decode($request->customer);
+            $amount = $request->amount;           
 
             $customer = Stripe\Customer::create(['name' => $request->name, 'email' => $request->email]);
 
@@ -70,7 +68,15 @@ class StripeController extends Controller
 
             if ($charge->status == 'succeeded') {
                 // $payment_subscription = Payment::create(['amount' => $amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
-                $customerArr = ['amount' => $amount, 'user_email' => $request->email, 'transaction_id' => $request->email, 'status' => $request->email, 'package_id' => $request->package_id,];
+
+                $orderReq = new Payment;
+                $orderReq->amount = $amount;
+                $orderReq->user_email = $request->email;
+                $orderReq->transaction_id =$charge->id;
+                $orderReq->status = $charge->status;
+                $orderReq->package_id = $request->package_id;
+                $orderReq->save();
+                
 
                 return response()->json(['status' => true, 'massage' => 'payment successfully.', 'data' => array('success' => true, 'resp' => $charge)], 200);
             } else {
