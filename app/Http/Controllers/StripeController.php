@@ -31,88 +31,40 @@ class StripeController extends Controller
         return view('emails/radiology-final-report-mail');
     }
 
-    // public function makePayment(Request $request){
-
-    //     $customer = \Stripe\Customer::create([
-    //         'email' => $_POST['stripeEmail'],
-    //         'source' => $_POST['stripeToken'],
-    //       ]);
-
-    //       \Stripe\Stripe::setApiKey('sk_test_51MneWGSDcpngmiAPOjUTxI43MHLb7OOjYVncVeRI9yKy8sDw7T898E7HlDjO6czP2k8F85DFY88RT35J3RYapHpf00SxePX90m');
-
-    //       $charge = \Stripe\Charge::create([
-    //         'customer' => $customer->id,
-    //         'description' => 'T-shirt',
-    //         'amount' => 500,
-    //         'currency' => 'inr',
-    //       ]);
-
-    //       dd($charge);
-    // }
+    
 
 
     public function stripePost(Request $request)
     {
         try {
-            //dd($request->stripeToken);
-
-
-            $amount = $request->amount;           
-
+            $amount = $request->amount;
             $customer = Stripe\Customer::create(['name' => $request->name, 'email' => $request->email]);
-
             Stripe\Customer::createSource($customer->id, ['source' => $request->stripeToken]);
-            $charge = Stripe\Charge::create(["amount" => $amount * 100, "currency" => "CHF", "customer" => $customer->id, "description" => $request->package_name,
+            $charge = Stripe\Charge::create([
+                "amount" => $amount * 100,
+                "currency" => "CHF",
+                "customer" => $customer->id,
+                "description" => $request->package_name,
 
             ]);
-
             if ($charge->status == 'succeeded') {
-                // $payment_subscription = Payment::create(['amount' => $amount * 100, 'user_email' =>  $customer_obj->email, 'transaction_id' => $charge->id, 'package_id' => $product_obj->id, 'status' => $charge->status]);
-
                 $orderReq = new Payment;
                 $orderReq->amount = $amount;
                 $orderReq->user_email = $request->email;
-                $orderReq->transaction_id =$charge->id;
+                $orderReq->transaction_id = $charge->id;
                 $orderReq->status = $charge->status;
                 $orderReq->package_id = $request->package_id;
                 $orderReq->save();
-                
-
-                return response()->json(['status' => true, 'massage' => 'payment successfully.', 'data' => array('success' => true, 'resp' => $charge)], 200);
+                $responseData = [
+                    'status' => $charge->status,
+                    'transaction_id' => $charge->id
+                ];
+                return response()->json(['status' => true, 'massage' => 'payment successfully.', 'data' => array('success' => true, 'resp' => $responseData)], 200);
             } else {
-
                 return response()->json(['status' => false, 'massage' => 'payment failed.'], 400);
             }
         } catch (Exception $e) {
-            //echo $e->getMessage();;
             return response()->json(['status' => false, 'massage' => 'payment failed! ' . $e->getMessage()], 400);
-
-        }
-    }
-    public function saveStripeOrder(Request $request)
-    {
-        try{
-            $newReq = new Payment;
-            $newReq->amount = $request->amount;
-            $newReq->user_email = $request->user_email;
-            $newReq->transaction_id = $request->transaction_id;
-            $newReq->status = $request->status;
-            $newReq->package_id = $request->package_id;
-            $newReq->save();
-            
-        
-            return response()->json([
-                'status' => true,
-                'massage' => 'Order saved successfully.'
-                
-            ], 200);
-        } catch (Exception $e) {
-            
-            return response()->json([
-                'status' => false,
-                'massage' => 'Error! ' . $e->getMessage()
-            ], 400);
-
         }
     }
 
@@ -120,16 +72,20 @@ class StripeController extends Controller
     {
 
 
-        $lineItems[] = ['price_data' => ['currency' => 'usd', 'product_data' => ['name' => "t-shirt",// 'images' => [$product->image]
-        ], 'unit_amount' => 5 * 100,], 'quantity' => 1,];
+        $lineItems[] = [
+            'price_data' => [
+                'currency' => 'usd',
+                'product_data' => [
+                    'name' => "t-shirt", // 'images' => [$product->image]
+                ],
+                'unit_amount' => 5 * 100,
+            ],
+            'quantity' => 1,
+        ];
 
         $session = Session::create(['line_items' => $lineItems, 'mode' => 'payment', 'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}", 'cancel_url' => route('checkout.cancel', [], true),]);
 
-        // $order = new Order();
-        // $order->status = 'unpaid';
-        // $order->total_price = $totalPrice;
-        // $order->session_id = $session->id;
-        // $order->save();
+        
 
         return redirect($session->url);
     }
@@ -141,21 +97,14 @@ class StripeController extends Controller
         try {
 
             $session = Session::retrieve($sessionId);
-            //dd($session->customer_details->name);
+            
             if (!$session) {
                 throw new NotFoundHttpException;
             }
-            //$customer = \Stripe\Customer::retrieve($session->customer_details);
+            
             $customer = $session->customer_details;
 
-            // $order = Order::where('session_id', $session->id)->first();
-            // if (!$order) {
-            //     throw new NotFoundHttpException();
-            // }
-            // if ($order->status === 'unpaid') {
-            //     $order->status = 'paid';
-            //     $order->save();
-            // }
+            
 
             return view('product.checkout-success', compact('customer'));
         } catch (Exception $e) {
@@ -171,7 +120,7 @@ class StripeController extends Controller
 
     public function webhook()
     {
-        // This is your Stripe CLI webhook secret for testing your endpoint locally.
+        
         $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
 
         $payload = @file_get_contents('php://input');
