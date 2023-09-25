@@ -11,7 +11,7 @@
         <td>Dr. med. Ali Rahman</td>
     </tr>
     <tr>
-        <td><img src="{{ asset('../../../public/signature-img.png') }}" alt="" /></td>
+        <td><img src="{{ asset('../../../public/image/signature-img.png') }}" alt="" /></td>
     </tr>
     <tr>
         <td>payment information</td>
