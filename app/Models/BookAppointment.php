@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Validator;
+
 class BookAppointment extends Model
 {
     use SoftDeletes, HasFactory;
@@ -18,34 +18,101 @@ class BookAppointment extends Model
         'appointment_email',
         'appointment_number',
     ];
-    public $rules = [
-        'visit_type' => 'required',
-        'name' => 'required',
-        'appointment_reason'=>'required',
-        'appointment_date'=>'required|date|date_format:Y-m-d',
-        'appointment_time'=>'required|date_format:H:i',
-        'appointment_email'=>'required',
-        'appointment_number'=>'required|numeric|digits:10',
-    ];
 
-    public function saveAppointment($request){
-      
-        $validator = Validator::make($request->all(),$this->rules);
-        if ($validator->fails()) {
-            $response = $validator->messages();
-            return response(["data" => $response, 'status' =>'error']);
-        }else{
-            $this->name = $request->name;
-            $this->visit_type = $request->visit_type;
-            $this->appointment_reason = $request->appointment_reason;
-            $this->appointment_date = $request->appointment_date;
-            $this->appointment_time = $request->appointment_time;
-            $this->appointment_email = $request->appointment_email;
-            $this->appointment_number = $request->appointment_number;
-            $this->save();
-            $response=$this;
+
+    public function saveAppointment($requestData, $id = '', $action)
+    {
+        $data = [];
+        try {
+            if ($action == 'add') {
+                $this->insert(
+                    [
+                        'appointment_email' => $requestData['appointment_email'],
+                        'name' => $requestData['name'],
+                        'appointment_reason' => $requestData['appointment_reason'],
+                        'appointment_date' => $requestData['appointment_date'],
+                        'appointment_time' => $requestData['appointment_time'],
+                        'appointment_number' => $requestData['appointment_number']
+                    ]
+
+                );
+            } else {
+                $this->where('id',$id)
+                    ->update(
+                        [
+                            'name' => $requestData['name'],
+                            'appointment_reason' => $requestData['appointment_reason'],
+                            'appointment_email' => $requestData['appointment_email'],
+                            'appointment_date' => $requestData['appointment_date'],
+                            'appointment_time' => $requestData['appointment_time'],
+                            'appointment_number' => $requestData['appointment_number']
+                        ]
+
+                    );
+            }
+            return $data = [
+                'data' => $this,
+                'status' => true
+            ];
+
+        } catch (Exception $e) {
+            return $data = [
+                'data' => 'Oops! Something went wrong. ' . $e->getMessage(),
+                'status' => false
+            ];
         }
+    }
+    public function getAppointmentById($id)
+    {
+        $data = [];
+        try {
+            $dataarr = $this->where('id', $id)
+                ->first();
+            return $data = [
+                'data' => $dataarr,
+                'status' => true
+            ];
 
-        return response(["data" => $response,'status'=>'success']);
+        } catch (Exception $e) {
+            return $data = [
+                'data' => 'Oops! Something went wrong. ' . $e->getMessage(),
+                'status' => false
+            ];
+        }
+    }
+    public function deleteAppointmentById($id)
+    {
+        $data = [];
+        try {
+            $dataarr = $this->where('id', $id)
+                ->delete();
+            return $data = [
+                'data' => $dataarr,
+                'status' => true
+            ];
+
+        } catch (Exception $e) {
+            return $data = [
+                'data' => 'Oops! Something went wrong. ' . $e->getMessage(),
+                'status' => false
+            ];
+        }
+    }
+    public function bookedAppointmentList()
+    {
+        $data = [];
+        try {
+            $dataarr = $this->all();
+            return $data = [
+                'data' => $dataarr,
+                'status' => true
+            ];
+
+        } catch (Exception $e) {
+            return $data = [
+                'data' => 'Oops! Something went wrong. ' . $e->getMessage(),
+                'status' => false
+            ];
+        }
     }
 }
