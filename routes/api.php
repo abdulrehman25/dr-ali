@@ -35,6 +35,10 @@ Route::post('login',[AuthController::class,'login']);
 
 
 Route::post('book-appointment',[BookAppointmentController::class,'bookAppointment']);
+Route::put('book-appointment',[BookAppointmentController::class,'editBookAppointment']);
+Route::get('book-appointment/{id}',[BookAppointmentController::class,'getBookAppointmentById']);
+Route::get('appointment-list',[BookAppointmentController::class,'bookedAppointmentList']);
+Route::delete('appointment-delete/{id}',[BookAppointmentController::class,'deleteAppointmentById']);
 
 Route::post('password/email',  ForgotPasswordController::class, '__invoke');
 Route::post('password/code/check', CodeCheckController::class,'__invoke');
