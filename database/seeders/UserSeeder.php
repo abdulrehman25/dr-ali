@@ -18,12 +18,12 @@ class UserSeeder extends Seeder
     {
         User::factory()->count(50)->create();
 
-        // User::create([
-        //     'email'=>'admin@radiologycheck.com',
-        //     'password' => Hash::make('admin@123'),
-        //     'first_name' => 'admin',
-        //     'last_name' => 'radiology',
-        //     'is_admin' => 'true'
-        // ]);
+        User::create([
+            'email'=>'admin@radiologycheck.com',
+            'password' => Hash::make('admin@123'),
+            'first_name' => 'admin',
+            'last_name' => 'radiology',
+            'is_admin' => 'true'
+        ]);
     }
 }
