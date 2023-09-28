@@ -85,7 +85,7 @@ class AuthController extends Controller
 
         $userData = $user->updateUserData($request);
        
-        Mail::to($userData->email)->send(new RadiologyFinalReport($userData));
+       // Mail::to($userData->email)->send(new RadiologyFinalReport($userData));
         return response(['data'=>$userData, 'status'=>200]);
     }
     public function login(Request $request)

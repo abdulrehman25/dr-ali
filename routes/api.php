@@ -68,6 +68,11 @@ Route::delete('delete_users_feedback/{id}',[UserFeedbackController::class, 'dele
 Route::post('contact_us',[ContactUsController::class,'createRequest']);
 
 Route::get('get_package/{id}',[PackageController::class,'getPackage']);
+Route::post('package',[PackageController::class,'savePackage']);
+Route::put('package-update',[PackageController::class,'editPackage']);
+Route::get('package-list',[PackageController::class,'packageList']);
+Route::delete('package-delete/{id}',[PackageController::class,'deleteAPackageById']);
+
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
