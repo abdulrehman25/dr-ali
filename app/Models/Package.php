@@ -11,6 +11,8 @@ class Package extends Model
     protected $fillable = [
         'name',
         'price',
+        'message',
+        'feature',
     ];
     public function savePackage($requestData, $id = '', $action)
     {
@@ -21,7 +23,9 @@ class Package extends Model
                 $this->insert(
                     [                        
                         'name' => $requestData['name'],
-                        'price' => $requestData['price']
+                        'price' => $requestData['price'],
+                        'message' => $requestData['message'],
+                        'feature' => $requestData['feature']
                     ]
 
                 );
@@ -30,7 +34,9 @@ class Package extends Model
                     ->update(
                         [
                             'name' => $requestData['name'],
-                            'price' => $requestData['price']
+                            'price' => $requestData['price'],
+                            'message' => $requestData['message'],
+                            'feature' => $requestData['feature']
                         ]
 
                     );

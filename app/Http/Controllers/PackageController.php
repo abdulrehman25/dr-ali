@@ -39,7 +39,9 @@ class PackageController extends Controller
             } else {
                 $packageArr = [                   
                     "name" => $request->name,
-                    "price" => $request->price
+                    "price" => $request->price,
+                    "message" => $request->message??null,
+                    "feature" => $request->feature??null
                 ];
                 $responseData = $package->savePackage($packageArr, '', 'add');
                 if ($responseData['status']) {
@@ -64,7 +66,9 @@ class PackageController extends Controller
             } else {
                 $packageArr = [                   
                     "name" => $request->name,
-                    "price" => $request->price
+                    "price" => $request->price,
+                    "message" => $request->message??null,
+                    "feature" => $request->feature??null
                 ];
                 $responseData = $package->savePackage($packageArr, $request->id, 'edit');
 
