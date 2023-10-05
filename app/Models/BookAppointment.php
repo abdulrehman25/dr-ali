@@ -32,7 +32,8 @@ class BookAppointment extends Model
                         'appointment_reason' => $requestData['appointment_reason'],
                         'appointment_date' => $requestData['appointment_date'],
                         'appointment_time' => $requestData['appointment_time'],
-                        'appointment_number' => $requestData['appointment_number']
+                        'appointment_number' => $requestData['appointment_number'],
+                        'appointment_status' => $requestData['appointment_status']
                     ]
 
                 );
@@ -45,7 +46,8 @@ class BookAppointment extends Model
                             'appointment_email' => $requestData['appointment_email'],
                             'appointment_date' => $requestData['appointment_date'],
                             'appointment_time' => $requestData['appointment_time'],
-                            'appointment_number' => $requestData['appointment_number']
+                            'appointment_number' => $requestData['appointment_number'],
+                            'appointment_status' => $requestData['appointment_status']
                         ]
 
                     );
