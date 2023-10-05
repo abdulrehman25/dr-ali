@@ -91,8 +91,8 @@ class User extends Authenticatable
         return $user;
     }
 
-    public function getAllUser(){
-        return User::where('is_admin','false')->orderBy('created_at','desc')->get();
+    public function getAllUser($perPage=20){
+        return User::where('is_admin','false')->orderBy('created_at','desc')->paginate();
     }
 
 }

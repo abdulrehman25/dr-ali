@@ -98,11 +98,12 @@ class BookAppointment extends Model
             ];
         }
     }
-    public function bookedAppointmentList($perPage=10)
+    public function bookedAppointmentList($status='false',$perPage=10)
     {
+        
         $data = [];
         try {
-            $dataarr = $this->paginate($perPage);
+            $dataarr = $this->where('appointment_status',$status)->paginate($perPage);
             return $data = [
                 'data' => $dataarr,
                 'status' => true
