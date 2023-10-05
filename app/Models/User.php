@@ -99,5 +99,10 @@ class User extends Authenticatable
     public function getAllUser($perPage=20){
         return User::where('is_admin','false')->orderBy('created_at','desc')->paginate();
     }
+    public function getOpenCloseAllUser($status='false',$perPage=20){
+        return User::where('is_admin','false')
+        ->where('appointment_status',$status)->orderBy('created_at','desc')->paginate();
+    }
+
 
 }

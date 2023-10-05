@@ -77,6 +77,7 @@ Route::delete('package-delete/{id}',[PackageController::class,'deleteAPackageByI
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('getusers',[AuthController::class,'getUser']);
+    Route::get('user-list/{status?}',[AuthController::class,'getOpenCloseUser']);
     //Route::get('user',[AuthController::class,'user']);
 
 });

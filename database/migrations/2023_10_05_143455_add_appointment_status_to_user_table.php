@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('book_appointments', function (Blueprint $table) {
-            $table->enum('appointment_status', ['true', 'false'])->default('false')->comment('true:close, false:open')->after('appointment_number');
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('appointment_status', ['true', 'false'])->default('false')->comment('true:close, false:open');
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('book_appointments', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('appointment_status');
         });
     }
