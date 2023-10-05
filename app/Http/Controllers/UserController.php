@@ -26,10 +26,13 @@ class UserController extends Controller
 
             $user = User::find($request->id);
             if($user){
-                $user->name = $request->name;
-                $user->email = $request->email;
-                $user->radiology_type = $request->radiology_type;
-                $user->contact_type = $request->contact_type;
+                dd($request->middle_name);
+                $user->first_name = $request->first_name;
+                $user->middle_name = $request->middle_name;
+                $user->last_name = $request->last_name;
+                $user->dob = $request->dob;
+                //$user->email = $request->email;
+                $user->past_medical_history = $request->past_medical_history;
                 $user->phone = $request->phone;
                 $user->save();
                 return response(["status" => "200",'data'=>$user, 'message' => 'User Updated Successfully !']);
