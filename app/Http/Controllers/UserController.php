@@ -26,7 +26,7 @@ class UserController extends Controller
 
             $user = User::find($request->id);
             if($user){
-                dd($request->middle_name);
+                
                 $user->first_name = $request->first_name;
                 $user->middle_name = $request->middle_name;
                 $user->last_name = $request->last_name;

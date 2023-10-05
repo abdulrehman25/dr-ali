@@ -30,7 +30,8 @@ class BookAppointmentController extends Controller
                     "appointment_reason" => $request->appointment_reason,
                     "appointment_email" => $request->appointment_email,
                     "appointment_date" => $request->appointment_date,
-                    "appointment_time" => $request->appointment_time
+                    "appointment_time" => $request->appointment_time,
+                    "appointment_status" => $request->appointment_status??'false'
                 ];
                 $responseData = $appointment->saveAppointment($appointmentArr, '', 'add');
                 if ($responseData['status']) {
@@ -53,13 +54,15 @@ class BookAppointmentController extends Controller
                 $response = $validator->messages();
                 return response(["data" => $response, 'status' => 'error']);
             } else {
+               
                 $appointmentArr = [
                     "appointment_number" => $request->appointment_number,
                     "name" => $request->name,
                     "appointment_reason" => $request->appointment_reason,
                     "appointment_email" => $request->appointment_email,
                     "appointment_date" => $request->appointment_date,
-                    "appointment_time" => $request->appointment_time
+                    "appointment_time" => $request->appointment_time,
+                    "appointment_status" => $request->appointment_status??'false'
                 ];
                 $responseData = $appointment->saveAppointment($appointmentArr, $request->id, 'edit');
 
