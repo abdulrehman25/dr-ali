@@ -118,5 +118,9 @@ class AuthController extends Controller
 
         return response()->json($user->getAllUser(),200);
     }
+    public function getOpenCloseUser(User $user,$status=null){
+        $status=($status==1)?'true':'false';
+        return response()->json($user->getOpenCloseAllUser($status),200);
+    }
 
 }
