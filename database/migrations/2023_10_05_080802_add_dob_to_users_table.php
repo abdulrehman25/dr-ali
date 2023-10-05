@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('dob',250)->nullable();
+            $table->string('middle_name',250)->nullable();
+            $table->string('past_medical_history',250)->nullable();
         });
     }
 
@@ -26,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('middle_name');
             $table->dropColumn('dob');
+            $table->dropColumn('past_medical_history');
         });
     }
 };
