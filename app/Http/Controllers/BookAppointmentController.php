@@ -106,10 +106,12 @@ class BookAppointmentController extends Controller
             return response()->json(['status' => false, 'massage' => 'Oops! Something went wrong. ' . $e->getMessage()], 400);
         }
     }
-    public function bookedAppointmentList(BookAppointment $appointment)
+    public function bookedAppointmentList(BookAppointment $appointment,$status=null)
     {
         try {
-            $responseData = $appointment->bookedAppointmentList();
+            $status=($status==1)?'true':'false';
+            
+            $responseData = $appointment->bookedAppointmentList($status);
 
             if ($responseData['status']) {
                 return response(["data" => $responseData['data'], 'status' => 'success']);
