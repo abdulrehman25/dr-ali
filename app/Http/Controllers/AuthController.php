@@ -122,5 +122,17 @@ class AuthController extends Controller
         $status=($status==1)?'true':'false';
         return response()->json($user->getOpenCloseAllUser($status),200);
     }
+    public function openCloseAppointmentUser(User $user,Request $request){
+        $user = User::find($request->id);
+        if($user){
+                
+            $user->appointment_status = $request->appointment_status;
+            $user->save();
+            return response(["status" => "200",'data'=>$user, 'message' => 'Appointment Updated Successfully !']);
+        }else{
+            return response(["status" => "404",'data'=>'User not Exists']);
+        }
+        
+    }
 
 }
