@@ -75,6 +75,7 @@ Route::delete('package-delete/{id}',[PackageController::class,'deleteAPackageByI
 
 Route::put('user-appointment',[AuthController::class,'openCloseAppointmentUser']);
 Route::get('user-list/{status?}',[AuthController::class,'getOpenCloseUser']);
+Route::get('user/{id}',[AuthController::class,'getUserById']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
