@@ -134,5 +134,9 @@ class AuthController extends Controller
         }
         
     }
+    public function getUserById(User $user,$id){
+        $userData=$user->getUserById($id);
+        return response(["status" => "200",'data'=>$userData, 'message' => 'Success']);        
+    }
 
 }

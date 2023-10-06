@@ -103,6 +103,9 @@ class User extends Authenticatable
         return User::where('is_admin','false')
         ->where('appointment_status',$status)->orderBy('created_at','desc')->paginate();
     }
+    public function getUserById($id){
+        return User::where('id',$id)->first();
+    }
 
 
 }
