@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -105,7 +106,16 @@ class User extends Authenticatable
     }
     public function getUserById($id){
         return User::where('id',$id)->first();
+       
+    }
+    public function getUserAppointmentById($id){
+        return $users = DB::table('users')
+            ->rightJoin('second_opinion', 'second_opinion.user_id', '=', 'users.id')
+            ->select('users.id', 'second_opinion.*')
+            ->where('users.id',$id)
+            ->paginate(20);
     }
 
+    
 
 }
