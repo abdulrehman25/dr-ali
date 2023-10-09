@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use DB;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -137,6 +138,63 @@ class AuthController extends Controller
     public function getUserById(User $user,$id){
         $userData=$user->getUserById($id);
         return response(["status" => "200",'data'=>$userData, 'message' => 'Success']);        
+    }
+    public function getUserAppointmentById(User $user,$id){
+        $userData=$user->getUserAppointmentById($id);
+        return response(["status" => "200",'data'=>$userData, 'message' => 'Success']);        
+    }
+
+    public function saveAppointment(Request $request){
+        $scanData =NULL;
+        $reportData =NULL;
+       try{
+            if ($scan = $request->file('scan')) {
+                $destinationPath = 'scan/';
+                $scanData = date('YmdHis').$scan->getClientOriginalName();
+                $scan->move($destinationPath, $scanData);
+            }
+            if ($report = $request->file('report')) {
+                $destinationPath = 'report/';
+                $reportData = date('YmdHis').$report->getClientOriginalName();
+                $report->move($destinationPath, $reportData);
+            }
+
+            $type_of_scan = json_encode($request->type_of_scan);
+            $what_part_of_body = json_encode($request->what_part_of_body);
+            
+            DB::table('second_opinion')
+            ->insert(array(
+                'user_id'=> $request->user_id,
+                'type_of_scan'=>$type_of_scan??null,
+                'what_part_of_body'=>$what_part_of_body??null,
+                'scan'=>$scanData??null,
+                'report'=>$reportData??null,
+                'comment'=>$request->comment??null,
+                'selected_package'=> $request->selected_package??null
+                
+            ));
+
+            return response(["status" => "200",'data'=>[], 'message' => 'Appointment Saved Successfully !']);
+
+        }catch (Exception $e) {
+            return response()->json(['status' => false, 'massage' => 'Oops! Something went wrong. ' . $e->getMessage()], 400);
+        }
+        
+    }
+    public function closeAppointment($id){
+        
+       try{
+            DB::table('second_opinion')
+            ->where('id',$id)
+            ->update([
+                'appointment_status' => 'true',
+            ]);
+            return response(["status" => "200",'data'=>[], 'message' => 'Appointment closed Successfully !']);
+
+        }catch (Exception $e) {
+            return response()->json(['status' => false, 'massage' => 'Oops! Something went wrong. ' . $e->getMessage()], 400);
+        }
+        
     }
 
 }

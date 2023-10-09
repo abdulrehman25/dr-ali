@@ -33,6 +33,8 @@ Route::post('register',[AuthController::class,'register']);
 Route::post('update_user', [AuthController::class, 'updateUserData']);
 Route::post('login',[AuthController::class,'login']);
 
+Route::post('appointment-save',[AuthController::class,'saveAppointment']);
+
 
 Route::post('book-appointment',[BookAppointmentController::class,'bookAppointment']);
 Route::put('book-appointment',[BookAppointmentController::class,'editBookAppointment']);
@@ -76,6 +78,8 @@ Route::delete('package-delete/{id}',[PackageController::class,'deleteAPackageByI
 Route::put('user-appointment',[AuthController::class,'openCloseAppointmentUser']);
 Route::get('user-list/{status?}',[AuthController::class,'getOpenCloseUser']);
 Route::get('user/{id}',[AuthController::class,'getUserById']);
+Route::get('user-appointments/{id}',[AuthController::class,'getUserAppointmentById']);
+Route::put('appointments-close/{id}',[AuthController::class,'closeAppointment']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
